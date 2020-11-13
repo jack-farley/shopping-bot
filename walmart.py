@@ -14,8 +14,9 @@ python walmart.py
 base_url = 'https://www.walmart.com/'
 playstation4_url = 'https://www.walmart.com/ip/Sony-PlayStation-4-1TB-Slim-Gaming-Console/101507200'
 playstation5_url = 'https://www.walmart.com/ip/PlayStation-5-Console/363472942'
+test_url = 'https://www.walmart.com/ip/onn-True-Wireless-Earphones-White/283162082'
 
-specific_url = playstation4_url
+specific_url = test_url
 
 
 # def get_product_links():
@@ -64,15 +65,64 @@ def perform_purchase(url):
         driver = webdriver.Chrome('chromedriver.exe')
         driver.get(url)
 
-        btn = driver.find_element_by_class_name('hello_world')
-        if btn == None:
+        time.sleep(2)
+
+        add_cart_btn = driver.find_element_by_xpath(
+            '//button[@class="button spin-button prod-ProductCTA--primary button--primary"]')
+        if add_cart_btn == None:
             print('Product not available, DONE')
             driver.quit()
             return
 
-        btn[0].click()
+        add_cart_btn.click()
 
-        time.sleep(5)  # Let the user actually see something!
+        time.sleep(2)
+
+        checkout_btn = driver.find_element_by_xpath(
+            '//button[@class="button ios-primary-btn-touch-fix hide-content-max-m checkoutBtn button--primary"]')
+
+        checkout_btn.click()
+
+        time.sleep(2)
+
+        continue_without_acct_btn = driver.find_element_by_xpath(
+            '//button[@class="button m-margin-top width-full button--primary"]')
+
+        continue_without_acct_btn.click()
+
+        time.sleep(2)
+
+        continue_to_delivery_btn = driver.find_element_by_xpath(
+            '//button[@class="button cxo-continue-btn button--primary"]')
+
+        continue_to_delivery_btn.click()
+
+        time.sleep(2)
+
+        driver.find_element_by_id('firstName').send_keys('John')
+        driver.find_element_by_id('lastName').send_keys('Doe')
+        driver.find_element_by_id(
+            'addressLineOne').send_keys('123 Broadway Ave')
+        driver.find_element_by_id('phone').send_keys('8571234567')
+        driver.find_element_by_id('city').clear()
+        driver.find_element_by_id('city').send_keys('Boston')
+        driver.find_element_by_id('state').send_keys('Massachusetts')
+        driver.find_element_by_id('postalCode').clear()
+        driver.find_element_by_id('postalCode').send_keys('02101')
+        driver.find_element_by_id('email').send_keys('jdoe123@gmail.com')
+
+        notification_box = driver.find_element_by_xpath(
+            '//input[@class="input-toggle__input"]')
+        notification_box.click()
+
+        time.sleep(2)
+
+        continue_to_payment_btn = driver.find_element_by_xpath(
+            '//button[@class="button button--primary"]')
+
+        continue_to_delivery_btn.click()
+
+        time.sleep(50000)  # Let the user actually see something!
         driver.quit()
     except Exception as e:
         print(e)
