@@ -11,9 +11,9 @@ import time
 python bestbuy.py --name="Play Station 5"
 '''
 
-base_url = 'https://bestbuy.com'
-playstation4_url = 'https://www.bestbuy.com/site/sony-playstation-4-pro-console-jet-black/5388900.p?skuId=5388900'
-playstation5_url = 'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149'
+base_url = 'https://www.walmart.com/'
+playstation4_url = 'https://www.walmart.com/ip/Sony-PlayStation-4-1TB-Slim-Gaming-Console/101507200'
+playstation5_url = 'https://www.walmart.com/ip/PlayStation-5-Console/363472942'
 
 specific_url = playstation5_url
 
@@ -49,8 +49,8 @@ def check_can_buy(url):
     '''
 
     buy_btn = url.html.find(
-        'button[class="btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button"]',
-        first=True)
+        'button',
+        containing='Add to cart', first=True)
     return buy_btn is not None
 
 
@@ -63,11 +63,13 @@ def perform_purchase(url):
 
 def test_check_can_buy():
     session = HTMLSession()
-    url = session.get(specific_url)
+    url1 = session.get(playstation4_url)
+    url2 = session.get(playstation5_url)
+    is_available1 = check_can_buy(url1)
+    is_available2 = check_can_buy(url2)
 
-    is_available = check_can_buy(url)
-
-    print(is_available)
+    print(f"Play Station 4 is in stock: {is_available1}")
+    print(f"Play Station 5 is in stock: {is_available2}")
 
 
 def main_(target_product):
