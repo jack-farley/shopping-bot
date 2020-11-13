@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from requests_html import HTMLSession, AsyncHTMLSession
@@ -59,118 +60,125 @@ def perform_purchase(url, test=True):
     Given url of product, add to cart then checkout
     '''
     driver = webdriver.Chrome('chromedriver.exe')
-    driver.get(url)
-    btn = driver.find_element_by_class_name('add-to-cart-button')
-    # if len(btn) == 0:
-    #     print('not available, DONE')
-    #     return
+    try:
+        driver.get(url)
+        btn = driver.find_element_by_class_name('add-to-cart-button')
+        # if len(btn) == 0:
+        #     print('not available, DONE')
+        #     return
 
-    btn.click()
-    time.sleep(1)
+        btn.click()
+        time.sleep(1)
 
-    print("Successfully added to cart.")
+        print("Successfully added to cart.")
 
-    checkout_url = 'https://www.bestbuy.com/checkout/r/fulfillment'
-    driver.get(checkout_url)
+        checkout_url = 'https://www.bestbuy.com/checkout/r/fulfillment'
+        driver.get(checkout_url)
 
-    # if we are currently on store pickup, switch to shipping
-    # shipping_button = driver.find_element_by_class_name('ispu-card__switch')\
-    #     .find_element_by_tag_name('a')
-    # if len(shipping_button) != 0:
-    #     shipping_button.click()
-    #     print("Switching to shipping")
+        # if we are currently on store pickup, switch to shipping
+        # shipping_button = driver.find_element_by_class_name('ispu-card__switch')\
+        #     .find_element_by_tag_name('a')
+        # if len(shipping_button) != 0:
+        #     shipping_button.click()
+        #     print("Switching to shipping")
 
-    # fill in general info and shipping info
-    driver.find_element_by_xpath("//input[contains(@id,'firstName')]")\
-        .send_keys(config.FIRST_NAME)
-    driver.find_element_by_xpath("//input[contains(@id,'lastName')]") \
-        .send_keys(config.LAST_NAME)
-    driver.find_element_by_xpath("//input[contains(@id,'street')]") \
-        .send_keys(config.ADDRESS)
-    time.sleep(0.5)
-    driver.find_element_by_xpath("//input[contains(@id,'city')]") \
-        .send_keys(config.CITY)
+        # fill in general info and shipping info
+        driver.find_element_by_xpath("//input[contains(@id,'firstName')]") \
+            .send_keys(config.FIRST_NAME)
+        driver.find_element_by_xpath("//input[contains(@id,'lastName')]") \
+            .send_keys(config.LAST_NAME)
+        driver.find_element_by_xpath("//input[contains(@id,'street')]") \
+            .send_keys(config.ADDRESS)
+        time.sleep(0.5)
+        driver.find_element_by_xpath("//input[contains(@id,'city')]") \
+            .send_keys(config.CITY)
 
-    drpState = \
-        Select(driver.find_element_by_xpath("//select[contains(@id,'state')]"))
-    # if drpState is None:
-    #     print("Unable to enter shipping address.")
-    #     return
-    drpState.select_by_visible_text(config.STATE)
+        drpState = \
+            Select(driver.find_element_by_xpath(
+                "//select[contains(@id,'state')]"))
+        # if drpState is None:
+        #     print("Unable to enter shipping address.")
+        #     return
+        drpState.select_by_visible_text(config.STATE)
 
-    driver.find_element_by_xpath("//input[contains(@id,'zipcode')]") \
-        .send_keys(config.ZIPCODE)
+        driver.find_element_by_xpath("//input[contains(@id,'zipcode')]") \
+            .send_keys(config.ZIPCODE)
 
-    driver.find_element_by_id('user.emailAddress').send_keys(config.EMAIL)
-    driver.find_element_by_id('user.phone').send_keys(config.PHONE)
+        driver.find_element_by_id('user.emailAddress').send_keys(config.EMAIL)
+        driver.find_element_by_id('user.phone').send_keys(config.PHONE)
 
-    print("Successfully filled out general info and shipping.")
+        print("Successfully filled out general info and shipping.")
 
-    # move on to payment info
-    continue_button = driver.find_element_by_class_name('btn-secondary')
-    # if len(continue_button) == 0:
-    #     print("Unable to continue to payment info.")
-    #     return
-    continue_button.click()
-    print("Continuing to payment info.")
+        # move on to payment info
+        continue_button = driver.find_element_by_class_name('btn-secondary')
+        # if len(continue_button) == 0:
+        #     print("Unable to continue to payment info.")
+        #     return
+        continue_button.click()
+        print("Continuing to payment info.")
 
-    time.sleep(5)
+        time.sleep(5)
 
-    # fill in payment info
-    driver.find_element_by_id('optimized-cc-card-number') \
-        .send_keys(config.CREDIT_NUMBER)
+        # fill in payment info
+        driver.find_element_by_id('optimized-cc-card-number') \
+            .send_keys(config.CREDIT_NUMBER)
 
-    exp_month = Select(driver.find_element_by_name('expiration-month'))
-    # if exp_month is None:
-    #     print("Unable to enter credit card expiration month.")
-    #     return
-    exp_month.select_by_visible_text(config.EXP_MONTH)
+        exp_month = Select(driver.find_element_by_name('expiration-month'))
+        # if exp_month is None:
+        #     print("Unable to enter credit card expiration month.")
+        #     return
+        exp_month.select_by_visible_text(config.EXP_MONTH)
 
-    exp_year = Select(driver.find_element_by_name('expiration-year'))
-    # if exp_year is None:
-    #     print("Unable to enter credit card expiration year.")
-    #     return
-    exp_year.select_by_visible_text(config.EXP_YEAR)
+        exp_year = Select(driver.find_element_by_name('expiration-year'))
+        # if exp_year is None:
+        #     print("Unable to enter credit card expiration year.")
+        #     return
+        exp_year.select_by_visible_text(config.EXP_YEAR)
 
-    driver.find_element_by_id('credit-card-cvv').send_keys(config.CVV)
+        driver.find_element_by_id('credit-card-cvv').send_keys(config.CVV)
 
-    print("Successfully entered credit card information.")
+        print("Successfully entered credit card information.")
 
-    # enter billing address
-    driver.find_element_by_id('payment.billingAddress.firstName') \
-        .send_keys(config.FIRST_NAME)
-    driver.find_element_by_id('payment.billingAddress.lastName') \
-        .send_keys(config.LAST_NAME)
-    driver.find_element_by_id('payment.billingAddress.street') \
-        .send_keys(config.ADDRESS)
-    driver.find_element_by_id('payment.billingAddress.city') \
-        .send_keys(config.CITY)
+        # enter billing address
+        driver.find_element_by_id('payment.billingAddress.firstName') \
+            .send_keys(config.FIRST_NAME)
+        driver.find_element_by_id('payment.billingAddress.lastName') \
+            .send_keys(config.LAST_NAME)
+        driver.find_element_by_id('payment.billingAddress.street') \
+            .send_keys(config.ADDRESS)
+        driver.find_element_by_id('payment.billingAddress.city') \
+            .send_keys(config.CITY)
 
-    state_menu = Select(
-        driver.find_element_by_id('payment.billingAddress.state'))
-    # if state_menu is None:
-    #     print("Unable to enter billing state.")
-    #     return
-    state_menu.select_by_visible_text(config.STATE)
+        state_menu = Select(
+            driver.find_element_by_id('payment.billingAddress.state'))
+        # if state_menu is None:
+        #     print("Unable to enter billing state.")
+        #     return
+        state_menu.select_by_visible_text(config.STATE)
 
-    driver.find_element_by_id('payment.billingAddress.zipcode') \
-        .send_keys(config.ZIPCODE)
+        driver.find_element_by_id('payment.billingAddress.zipcode') \
+            .send_keys(config.ZIPCODE)
 
-    print("Successfully entered billing address.")
+        print("Successfully entered billing address.")
 
-    # Place the order
-    place_order = \
-        driver.find_element_by_class_name('btn btn-lg btn-block btn-primary')
-    # if len(place_order) == 0:
-    #     print("Unable to place order.")
-    #     return
+        # Place the order
+        place_order = \
+            driver.find_element_by_class_name(
+                'btn btn-lg btn-block btn-primary')
+        # if len(place_order) == 0:
+        #     print("Unable to place order.")
+        #     return
 
+        if not test:
+            place_order.click()
+        print("Order placed.")
 
-    if not test:
-        place_order.click()
-    print("Order placed.")
+        time.sleep(100)
+        driver.quit()
 
-    time.sleep(100)
+    except Exception as e:
+        driver.quit()
+        print(e)
 
 
 def test_check_can_buy(url):
