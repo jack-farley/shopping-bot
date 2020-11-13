@@ -8,12 +8,13 @@ import config
 # Reference: http://www.michaelfxu.com/tools%20and%20infrastructures/building-a-sniping-bot/
 
 '''
-python bestbuy.py --name="Play Station"
+python bestbuy.py --name="Play Station 5"
 '''
 
 base_url = 'https://bestbuy.com'
 playstation4_url = 'https://www.bestbuy.com/site/sony-playstation-4-pro-console-jet-black/5388900.p?skuId=5388900'
 playstation5_url = 'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149'
+
 charging_cable_url = 'https://www.bestbuy.com/site/apple-3-3-usb-type-c-to-lightning-charging-cable-white/6259804.p?skuId=6259804'
 
 
