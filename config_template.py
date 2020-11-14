@@ -1,0 +1,16 @@
+FIRST_NAME = ''
+LAST_NAME = ''
+ADDRESS = ''
+CITY = ''
+STATE = 'XX'
+ZIPCODE = 'XXXXX'
+
+EMAIL = ''
+PHONE = ''
+
+CREDIT_NUMBER = ''
+EXP_MONTH = 'XX'
+EXP_YEAR = 'XXXX'
+CVV = 'XXX'
+
+NUM_BUY = ''
