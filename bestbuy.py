@@ -1,8 +1,8 @@
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from requests_html import HTMLSession, AsyncHTMLSession
 import time
+import threading
 
 import config
 
@@ -48,10 +48,17 @@ def check_can_buy(url):
     <input type="submit" name="commit" value="add to cart" class="button">
     Returns True if so, False if not
     '''
+    session = HTMLSession()
 
-    buy_btn = url.html.find(
-        'button[class="btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button"]',
-        first=True)
+    try:
+        r = session.get(url)
+
+        buy_btn = r.html.find(
+            'button[class="btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button"]',
+            first=True)
+    finally:
+        session.close()
+
     return buy_btn is not None
 
 
@@ -139,32 +146,30 @@ def perform_purchase(url, test=True):
 
         print("Successfully entered credit card information.")
 
-        # enter billing address
-        driver.find_element_by_id('payment.billingAddress.firstName') \
-            .send_keys(config.FIRST_NAME)
-        driver.find_element_by_id('payment.billingAddress.lastName') \
-            .send_keys(config.LAST_NAME)
-        driver.find_element_by_id('payment.billingAddress.street') \
-            .send_keys(config.ADDRESS)
-        driver.find_element_by_id('payment.billingAddress.city') \
-            .send_keys(config.CITY)
-
-        state_menu = Select(
-            driver.find_element_by_id('payment.billingAddress.state'))
-        # if state_menu is None:
-        #     print("Unable to enter billing state.")
-        #     return
-        state_menu.select_by_visible_text(config.STATE)
-
-        driver.find_element_by_id('payment.billingAddress.zipcode') \
-            .send_keys(config.ZIPCODE)
-
-        print("Successfully entered billing address.")
+        # # enter billing address
+        # driver.find_element_by_id('payment.billingAddress.firstName') \
+        #     .send_keys(config.FIRST_NAME)
+        # driver.find_element_by_id('payment.billingAddress.lastName') \
+        #     .send_keys(config.LAST_NAME)
+        # driver.find_element_by_id('payment.billingAddress.street') \
+        #     .send_keys(config.ADDRESS)
+        # driver.find_element_by_id('payment.billingAddress.city') \
+        #     .send_keys(config.CITY)
+        #
+        # state_menu = Select(
+        #     driver.find_element_by_id('payment.billingAddress.state'))
+        # # if state_menu is None:
+        # #     print("Unable to enter billing state.")
+        # #     return
+        # state_menu.select_by_visible_text(config.STATE)
+        #
+        # driver.find_element_by_id('payment.billingAddress.zipcode') \
+        #     .send_keys(config.ZIPCODE)
+        #
+        # print("Successfully entered billing address.")
 
         # Place the order
-        place_order = \
-            driver.find_element_by_class_name(
-                'btn btn-lg btn-block btn-primary')
+        place_order = driver.find_element_by_class_name('btn-block')
         # if len(place_order) == 0:
         #     print("Unable to place order.")
         #     return
@@ -174,19 +179,16 @@ def perform_purchase(url, test=True):
         print("Order placed.")
 
         time.sleep(100)
-        driver.quit()
 
     except Exception as e:
-        driver.quit()
         print(e)
+
+    finally:
+        driver.quit()
 
 
 def test_check_can_buy(url):
-    session = HTMLSession()
-    r = session.get(url)
-
-    is_available = check_can_buy(r)
-
+    is_available = check_can_buy(url)
     print(is_available)
 
 
@@ -195,9 +197,26 @@ def test_perform_purchase(url):
 
 
 def main():
-    test_check_can_buy(charging_cable_url)
-    test_perform_purchase(charging_cable_url)
+    threads = []
+    url = playstation5_url
+    test = False
 
+    available = check_can_buy(url)
+    while not available:
+        available = check_can_buy(url)
+        print("Unavailable.")
+        time.sleep(10)
+    print(config.NUM_BUY)
+
+    # start the threads
+    for i in range(config.NUM_BUY):
+        x = threading.Thread(target=perform_purchase, args=(url, test))
+        x.start()
+        threads.append(x)
+
+    # wait for the threads to stop
+    for thread in threads:
+        thread.join()
 
     # import argparse
     # parser = argparse.ArgumentParser(description='PS5 bot main parser')
