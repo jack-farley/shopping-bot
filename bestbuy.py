@@ -200,11 +200,15 @@ def main():
     threads = []
     url = playstation5_url
     test = False
+    print("Buying from: " + url)
+    print("Test: " + str(test))
 
+    checks = 1
     available = check_can_buy(url)
     while not available:
         available = check_can_buy(url)
-        print("Unavailable. Waiting 10 seconds.")
+        checks = checks + 1
+        print("Unavailable. Waiting 10 seconds." + str(checks))
         time.sleep(10)
 
     # start the threads
