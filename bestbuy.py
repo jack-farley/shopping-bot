@@ -83,11 +83,13 @@ def perform_purchase(url, test=True):
         driver.get(checkout_url)
 
         # if we are currently on store pickup, switch to shipping
-        # shipping_button = driver.find_element_by_class_name('ispu-card__switch')\
-        #     .find_element_by_tag_name('a')
-        # if len(shipping_button) != 0:
-        #     shipping_button.click()
-        #     print("Switching to shipping")
+        try:
+            shipping_button = driver.find_element_by_class_name('ispu-card__switch')\
+                .find_element_by_tag_name('a')
+            shipping_button.click()
+            print("Switching to shipping")
+        except Exception as e:
+            print("Started on shipping page.")
 
         # fill in general info and shipping info
         driver.find_element_by_xpath("//input[contains(@id,'firstName')]") \
@@ -178,8 +180,6 @@ def perform_purchase(url, test=True):
             place_order.click()
         print("Order placed.")
 
-        time.sleep(100)
-
     except Exception as e:
         print(e)
 
@@ -204,9 +204,8 @@ def main():
     available = check_can_buy(url)
     while not available:
         available = check_can_buy(url)
-        print("Unavailable.")
+        print("Unavailable. Waiting 10 seconds.")
         time.sleep(10)
-    print(config.NUM_BUY)
 
     # start the threads
     for i in range(config.NUM_BUY):

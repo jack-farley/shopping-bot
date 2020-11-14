@@ -13,4 +13,4 @@ EXP_MONTH = 'XX'
 EXP_YEAR = 'XXXX'
 CVV = 'XXX'
 
-NUM_BUY = ''
+NUM_BUY = 0
