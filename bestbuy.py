@@ -48,18 +48,24 @@ def check_can_buy(url):
     <input type="submit" name="commit" value="add to cart" class="button">
     Returns True if so, False if not
     '''
-    session = HTMLSession()
-
     try:
-        r = session.get(url)
+        session = HTMLSession()
 
-        buy_btn = r.html.find(
-            'button[class="btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button"]',
-            first=True)
-    finally:
-        session.close()
+        try:
+            r = session.get(url)
 
-    return buy_btn is not None
+            buy_btn = r.html.find(
+                'button[class="btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button"]',
+                first=True)
+        finally:
+            session.close()
+
+        return buy_btn is not None
+    
+    except Exception as e:
+        print("Unable to connect. Waiting 1 minute.")
+        time.sleep(60)
+        return False
 
 
 def perform_purchase(url, test=True):
@@ -208,7 +214,7 @@ def main():
     while not available:
         available = check_can_buy(url)
         checks = checks + 1
-        print("Unavailable. Waiting 10 seconds." + str(checks))
+        print("Unavailable. Waiting 10 seconds. Iteration " + str(checks) + ".")
         time.sleep(10)
 
     # start the threads
