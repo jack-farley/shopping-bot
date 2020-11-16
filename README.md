@@ -1,1 +1,5 @@
-We're making a bot to snipe in demand products from certain websites.
+This is a bot that we created to handle automated shopping on ecommerce websites. We currently support BestBuy and Walmart.
+
+To use, copy the 'config-template.py' file, rename it 'config.py', and fill in the information. Then, run the script.
+
+Created by Jack Farley and Alexander Wang.
