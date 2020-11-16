@@ -63,7 +63,7 @@ def perform_purchase(url):
     Given url of product, add to cart then checkout
     '''
     try:
-        driver = webdriver.Chrome('chromedriver.exe')
+        driver = webdriver.Chrome('../chromedriver.exe')
         driver.get(url)
 
         time.sleep(2)
