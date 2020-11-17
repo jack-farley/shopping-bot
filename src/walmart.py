@@ -1,12 +1,15 @@
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from requests_html import HTMLSession, AsyncHTMLSession
 import time
+import us
+
+from bot import ShoppingBotInterface
 
 # import config
 
 # Reference: http://www.michaelfxu.com/tools%20and%20infrastructures/building-a-sniping-bot/
+# Bypassing Captcha: https://stackoverflow.com/questions/33225947/can-a-website-detect-when-you-are-using-selenium-with-chromedriver
 
 '''
 python walmart.py
@@ -41,97 +44,117 @@ specific_url = test_url
 #     '''
 #     pass
 
+class WalmartBot(ShoppingBotInterface):
 
-def check_can_buy(url):
-    '''
-    Given a page (returned by session.get(target_url)),
-    find if there is such html code within:
-    <input type="submit" name="commit" value="add to cart" class="button">
-    Returns True if so, False if not
-    '''
-    session = HTMLSession()
-    response = session.get(url)
-    buy_btn = response.html.find(
-        'button',
-        containing='Add to cart', first=True)
+    def __init__(self, config):
+        self.config = config
 
-    return buy_btn is not None
+    def check_can_buy(self, url) -> bool:
+        try:
+            session = HTMLSession()
 
+            try:
+                r = session.get(url)
 
-def perform_purchase(url):
-    '''
-    Given url of product, add to cart then checkout
-    '''
-    try:
+                buy_btn = r.html.find(
+                    'button',
+                    containing='Add to cart',
+                    first=True)
+            finally:
+                session.close()
+
+            return buy_btn is not None
+
+        except Exception as e:
+            print("Unable to connect. Waiting 1 minute.")
+            time.sleep(60)
+            return False
+
+    def perform_purchase(self, url, test=False) -> bool:
         driver = webdriver.Chrome('../chromedriver.exe')
-        driver.get(url)
+        try:
+            driver.get(url)
 
-        time.sleep(2)
+            time.sleep(1000)
 
-        add_cart_btn = driver.find_element_by_xpath(
-            '//button[@class="button spin-button prod-ProductCTA--primary button--primary"]')
-        if add_cart_btn == None:
-            print('Product not available, DONE')
+            add_cart_btn = driver.find_element_by_xpath(
+                '//button[@class="button spin-button prod-ProductCTA--primary button--primary"]')
+            if add_cart_btn == None:
+                print('Product not available, DONE')
+                driver.quit()
+                return
+
+            add_cart_btn.click()
+
+            time.sleep(2)
+
+            checkout_btn = driver.find_element_by_xpath(
+                '//button[@class="button ios-primary-btn-touch-fix hide-content-max-m checkoutBtn button--primary"]')
+
+            checkout_btn.click()
+
+            time.sleep(2)
+
+            continue_without_acct_btn = driver.find_element_by_xpath(
+                '//button[@class="button m-margin-top width-full button--primary"]')
+
+            continue_without_acct_btn.click()
+
+            time.sleep(2)
+
+            continue_to_delivery_btn = driver.find_element_by_xpath(
+                '//button[@class="button cxo-continue-btn button--primary"]')
+
+            continue_to_delivery_btn.click()
+
+            time.sleep(2)
+
+            driver.find_element_by_id('firstName')\
+                .send_keys(self.config.FIRST_NAME)
+            driver.find_element_by_id('lastName')\
+                .send_keys(self.config.LAST_NAME)
+            driver.find_element_by_id('addressLineOne')\
+                .send_keys(self.config.ADDRESS)
+            driver.find_element_by_id('phone').send_keys(self.config.PHONE)
+            driver.find_element_by_id('city').clear()
+            driver.find_element_by_id('city').send_keys(self.config.CITY)
+
+            drpState = Select(driver.find_element_by_id('state'))
+            state = us.states.lookup(self.config.state)
+            drpState.select_by_visible_text(state.name)
+
+            driver.find_element_by_id('postalCode').clear()
+            driver.find_element_by_id('postalCode')\
+                .send_keys(self.config.ZIPCODE)
+            driver.find_element_by_id('email').send_keys(self.config.EMAIL)
+
+            notification_box = driver.find_element_by_xpath(
+                '//input[@class="input-toggle__input"]')
+            notification_box.click()
+
+            time.sleep(2)
+
+            continue_to_payment_btn = driver.find_element_by_xpath(
+                '//button[@class="button button--primary"]')
+
+            continue_to_payment_btn.click()
+
+            time.sleep(50000)  # Let the user actually see something!
+
+            return True
+
+        except Exception as e:
+            print(e)
+            print("Unable to purchase.")
+            return False
+
+        finally:
             driver.quit()
-            return
-
-        add_cart_btn.click()
-
-        time.sleep(2)
-
-        checkout_btn = driver.find_element_by_xpath(
-            '//button[@class="button ios-primary-btn-touch-fix hide-content-max-m checkoutBtn button--primary"]')
-
-        checkout_btn.click()
-
-        time.sleep(2)
-
-        continue_without_acct_btn = driver.find_element_by_xpath(
-            '//button[@class="button m-margin-top width-full button--primary"]')
-
-        continue_without_acct_btn.click()
-
-        time.sleep(2)
-
-        continue_to_delivery_btn = driver.find_element_by_xpath(
-            '//button[@class="button cxo-continue-btn button--primary"]')
-
-        continue_to_delivery_btn.click()
-
-        time.sleep(2)
-
-        driver.find_element_by_id('firstName').send_keys('John')
-        driver.find_element_by_id('lastName').send_keys('Doe')
-        driver.find_element_by_id(
-            'addressLineOne').send_keys('123 Broadway Ave')
-        driver.find_element_by_id('phone').send_keys('8571234567')
-        driver.find_element_by_id('city').clear()
-        driver.find_element_by_id('city').send_keys('Boston')
-        driver.find_element_by_id('state').send_keys('Massachusetts')
-        driver.find_element_by_id('postalCode').clear()
-        driver.find_element_by_id('postalCode').send_keys('02101')
-        driver.find_element_by_id('email').send_keys('jdoe123@gmail.com')
-
-        notification_box = driver.find_element_by_xpath(
-            '//input[@class="input-toggle__input"]')
-        notification_box.click()
-
-        time.sleep(2)
-
-        continue_to_payment_btn = driver.find_element_by_xpath(
-            '//button[@class="button button--primary"]')
-
-        continue_to_delivery_btn.click()
-
-        time.sleep(50000)  # Let the user actually see something!
-        driver.quit()
-    except Exception as e:
-        print(e)
 
 
-def test_check_can_buy():
-    is_available1 = check_can_buy(playstation4_url)
-    is_available2 = check_can_buy(playstation5_url)
+def test_check_can_buy(bot):
+    is_available1 = bot.check_can_buy(playstation4_url)
+    is_available2 = bot.check_can_buy(playstation5_url)
 
     print(f"Play Station 4 is in stock: {is_available1}")
     print(f"Play Station 5 is in stock: {is_available2}")
@@ -140,9 +163,11 @@ def test_check_can_buy():
 # define main
 
 def main():
-    if(check_can_buy(specific_url)):
+    import config
+    bot = WalmartBot(config)
+    if bot.check_can_buy(specific_url):
         print(f"Executing purchase for {specific_url} ...")
-        perform_purchase(specific_url)
+        bot.perform_purchase(specific_url)
     else:
         print(f"Purchase was not executed for {specific_url}")
 

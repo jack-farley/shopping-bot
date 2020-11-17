@@ -3,6 +3,7 @@ LAST_NAME = ''
 ADDRESS = ''
 CITY = ''
 STATE = 'XX'
+
 ZIPCODE = 'XXXXX'
 
 EMAIL = ''

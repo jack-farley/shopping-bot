@@ -9,6 +9,7 @@ verify_ssl = true
 selenium = "*"
 requests-html = "*"
 config = "*"
+us = "*"
 
 [requires]
 python_version = "3.8"

@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from requests_html import HTMLSession
 import time
-import threading
 
 from bot import ShoppingBotInterface
 
@@ -64,7 +63,7 @@ class BestBuyBot(ShoppingBotInterface):
                 print("Started on shipping page.")
 
             # fill in general info and shipping info
-            driver.find_element_by_xpath("//input[contains(@id,'firstName')]") \
+            driver.find_element_by_xpath("//input[contains(@id,'firstName')]")\
                 .send_keys(self.config.FIRST_NAME)
             driver.find_element_by_xpath("//input[contains(@id,'lastName')]") \
                 .send_keys(self.config.LAST_NAME)
@@ -74,9 +73,8 @@ class BestBuyBot(ShoppingBotInterface):
             driver.find_element_by_xpath("//input[contains(@id,'city')]") \
                 .send_keys(self.config.CITY)
 
-            drpState = \
-                Select(driver.find_element_by_xpath(
-                    "//select[contains(@id,'state')]"))
+            drpState = Select(driver.find_element_by_xpath(
+                "//select[contains(@id,'state')]"))
             drpState.select_by_visible_text(self.config.STATE)
 
             driver.find_element_by_xpath("//input[contains(@id,'zipcode')]") \
@@ -118,7 +116,7 @@ class BestBuyBot(ShoppingBotInterface):
             if not test:
                 place_order.click()
             print("Order placed.")
-            return True;
+            return True
 
         except Exception as e:
             print(e)
