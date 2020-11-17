@@ -71,11 +71,11 @@ class WalmartBot(ShoppingBotInterface):
             return False
 
     def perform_purchase(self, url, test=False) -> bool:
-        driver = webdriver.Chrome('../chromedriver.exe')
+        driver = webdriver.Chrome('../chromedrivercopy.exe')
         try:
             driver.get(url)
 
-            time.sleep(1000)
+            time.sleep(2)
 
             add_cart_btn = driver.find_element_by_xpath(
                 '//button[@class="button spin-button prod-ProductCTA--primary button--primary"]')
