@@ -113,9 +113,11 @@ class BestBuyBot(ShoppingBotInterface):
             # Place the order
             place_order = driver.find_element_by_class_name('btn-block')
 
+            print("Ready to place order.")
+
             if not test:
                 place_order.click()
-            print("Order placed.")
+                print("Order placed.")
             return True
 
         except Exception as e:
