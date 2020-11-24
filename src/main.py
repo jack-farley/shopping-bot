@@ -3,12 +3,19 @@ import threading
 
 import config
 from bestbuy import BestBuyBot
+from walmart import WalmartBot
 
 # bestbuy urls
-base_url = 'https://bestbuy.com'
-playstation4_url = 'https://www.bestbuy.com/site/sony-playstation-4-pro-console-jet-black/5388900.p?skuId=5388900'
-playstation5_url = 'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149'
-charging_cable_url = 'https://www.bestbuy.com/site/apple-3-3-usb-type-c-to-lightning-charging-cable-white/6259804.p?skuId=6259804'
+bestbuy_base_url = 'https://bestbuy.com'
+bestbuy_playstation4_url = 'https://www.bestbuy.com/site/sony-playstation-4-pro-console-jet-black/5388900.p?skuId=5388900'
+bestbuy_playstation5_url = 'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149'
+bestbuy_charging_cable_url = 'https://www.bestbuy.com/site/apple-3-3-usb-type-c-to-lightning-charging-cable-white/6259804.p?skuId=6259804'
+
+# walmart urls
+walmart_base_url = 'https://www.walmart.com/'
+walmart_playstation4_url = 'https://www.walmart.com/ip/Sony-PlayStation-4-1TB-Slim-Gaming-Console/101507200'
+walmart_playstation5_url = 'https://www.walmart.com/ip/PlayStation-5-Console/363472942'
+walmart_test_url = 'https://www.walmart.com/ip/onn-True-Wireless-Earphones-White/283162082'
 
 
 def watch(bot, url):
@@ -42,10 +49,14 @@ def buy(bot, url, num=0, test=True):
 
 def main():
     bestbuy = BestBuyBot(config)
+    walmart = WalmartBot(config)
 
-    print(bestbuy.check_can_buy(charging_cable_url))
-    print(bestbuy.check_can_buy(playstation5_url))
-    bestbuy.test_perform_purchase(charging_cable_url)
+    print(bestbuy.check_can_buy(bestbuy_charging_cable_url))
+    return
+    print(bestbuy.check_can_buy(bestbuy_playstation5_url))
+
+    print(walmart.check_can_buy(walmart_test_url))
+    print(walmart.check_can_buy(walmart_playstation5_url))
 
     # import argparse
     # parser = argparse.ArgumentParser(description='PS5 bot main parser')

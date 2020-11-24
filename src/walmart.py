@@ -6,43 +6,8 @@ import us
 
 from bot import ShoppingBotInterface
 
-# import config
-
 # Reference: http://www.michaelfxu.com/tools%20and%20infrastructures/building-a-sniping-bot/
 # Bypassing Captcha: https://stackoverflow.com/questions/33225947/can-a-website-detect-when-you-are-using-selenium-with-chromedriver
-
-'''
-python walmart.py
-'''
-
-base_url = 'https://www.walmart.com/'
-playstation4_url = 'https://www.walmart.com/ip/Sony-PlayStation-4-1TB-Slim-Gaming-Console/101507200'
-playstation5_url = 'https://www.walmart.com/ip/PlayStation-5-Console/363472942'
-test_url = 'https://www.walmart.com/ip/onn-True-Wireless-Earphones-White/283162082'
-
-specific_url = test_url
-
-
-# def get_product_links():
-#     '''
-#     Returns list of elements "items",
-#     each containing a link to product detail page
-#     '''
-#     pass
-
-
-# def get_matched_and_available(target_name):
-#     '''
-#     Given a target name, filter the product on main page,
-#     and return links to products with available items
-
-#     checked_urls: if already checked (and not a match in product name),
-#     skip in future checks
-
-#     Exactly how this should work, depends on how the drop works - is the page already there,
-#     just not for sale yet? Or page is added at drop time?
-#     '''
-#     pass
 
 class WalmartBot(ShoppingBotInterface):
 
@@ -200,27 +165,3 @@ class WalmartBot(ShoppingBotInterface):
 
         finally:
             driver.quit()
-
-
-def test_check_can_buy(bot):
-    is_available1 = bot.check_can_buy(playstation4_url)
-    is_available2 = bot.check_can_buy(playstation5_url)
-
-    print(f"Play Station 4 is in stock: {is_available1}")
-    print(f"Play Station 5 is in stock: {is_available2}")
-
-
-# define main
-
-def main():
-    import config
-    bot = WalmartBot(config)
-    if bot.check_can_buy(specific_url):
-        print(f"Executing purchase for {specific_url} ...")
-        bot.perform_purchase(specific_url, test=True)
-    else:
-        print(f"Purchase was not executed for {specific_url}")
-
-
-if __name__ == "__main__":
-    main()

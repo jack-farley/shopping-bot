@@ -25,9 +25,12 @@ class BestBuyBot(ShoppingBotInterface):
                 r = session.get(url)
 
                 buy_btn = r.html.find(
-                    'button[class="btn btn-primary btn-lg btn-block '
-                    'btn-leading-ficon add-to-cart-button"]',
-                    first=True)
+                    'div[class="fulfillment-add-to-cart-button"]',
+                    first=True
+                ).find(
+                    "button",
+                )
+                print(buy_btn)
             finally:
                 session.close()
 
