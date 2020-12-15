@@ -10,6 +10,8 @@ bestbuy_base_url = 'https://bestbuy.com'
 bestbuy_playstation4_url = 'https://www.bestbuy.com/site/sony-playstation-4-pro-console-jet-black/5388900.p?skuId=5388900'
 bestbuy_playstation5_url = 'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149'
 bestbuy_charging_cable_url = 'https://www.bestbuy.com/site/apple-3-3-usb-type-c-to-lightning-charging-cable-white/6259804.p?skuId=6259804'
+bestbuy_portable_charger_url = 'https://www.bestbuy.com/site/insignia-extended-play-5000-mah-portable-charger-for-nintendo-switch-lite-black/6387845.p?skuId=6387845'
+bestbuy_roku_url = 'https://www.bestbuy.com/site/roku-premiere-4k-streaming-media-player-black/6293217.p?skuId=6293217'
 
 # walmart urls
 walmart_base_url = 'https://www.walmart.com/'
@@ -23,10 +25,13 @@ def watch(bot, url):
     checks = 0
     available = bot.check_can_buy(url)
     while not available:
+        checks = checks + 1
         print("Unavailable. Waiting 10 seconds. Iteration "
               + str(checks) + ".")
         time.sleep(10)
         available = bot.check_can_buy(url)
+
+    print("The item is available.")
 
     return available
 
@@ -49,14 +54,14 @@ def buy(bot, url, num=0, test=True):
 
 def main():
     bestbuy = BestBuyBot(config)
-    walmart = WalmartBot(config)
 
-    print(bestbuy.check_can_buy(bestbuy_charging_cable_url))
+    url = bestbuy_playstation5_url
+
+    watch(bestbuy, url)
+
+    buy(bestbuy, url, 4, test=False)
+
     return
-    print(bestbuy.check_can_buy(bestbuy_playstation5_url))
-
-    print(walmart.check_can_buy(walmart_test_url))
-    print(walmart.check_can_buy(walmart_playstation5_url))
 
     # import argparse
     # parser = argparse.ArgumentParser(description='PS5 bot main parser')

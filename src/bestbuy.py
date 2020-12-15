@@ -6,7 +6,6 @@ import time
 from bot import ShoppingBotInterface
 
 # Reference: http://www.michaelfxu.com/tools%20and%20infrastructures/building-a-sniping-bot/
-
 '''
 python bestbuy.py --name="Play Station 5"
 '''
@@ -20,21 +19,14 @@ class BestBuyBot(ShoppingBotInterface):
     def check_can_buy(self, url) -> bool:
         try:
             session = HTMLSession()
-
             try:
                 r = session.get(url)
+                btn = r.html.find('button[class="btn btn-primary btn-lg btn-block btn-leading-ficon add-to-cart-button"]')
 
-                buy_btn = r.html.find(
-                    'div[class="fulfillment-add-to-cart-button"]',
-                    first=True
-                ).find(
-                    "button",
-                )
-                print(buy_btn)
+                return len(btn) == 1
+
             finally:
                 session.close()
-
-            return buy_btn is not None
 
         except Exception as e:
             print("Unable to connect. Waiting 1 minute.")
@@ -57,16 +49,14 @@ class BestBuyBot(ShoppingBotInterface):
 
             # if we are currently on store pickup, switch to shipping
             try:
-                shipping_button = driver.find_element_by_class_name(
-                    'ispu-card__switch') \
-                    .find_element_by_tag_name('a')
+                shipping_button = driver.find_element_by_xpath("//a[class='ispu-card__switch']")
                 shipping_button.click()
                 print("Switching to shipping")
             except Exception as e:
                 print("Started on shipping page.")
 
             # fill in general info and shipping info
-            driver.find_element_by_xpath("//input[contains(@id,'firstName')]")\
+            driver.find_element_by_xpath("//input[contains(@id,'firstName')]") \
                 .send_keys(self.config.FIRST_NAME)
             driver.find_element_by_xpath("//input[contains(@id,'lastName')]") \
                 .send_keys(self.config.LAST_NAME)
