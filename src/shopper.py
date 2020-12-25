@@ -1,5 +1,6 @@
-import time
 import threading
+import time
+import argparse
 
 import config
 from bestbuy import BestBuyBot
@@ -20,7 +21,7 @@ walmart_playstation5_url = 'https://www.walmart.com/ip/PlayStation-5-Console/363
 walmart_test_url = 'https://www.walmart.com/ip/onn-True-Wireless-Earphones-White/283162082'
 
 
-def watch(bot, url):
+def watch(bot, url, delay):
     print("Watching: " + url)
     checks = 0
     available = bot.check_can_buy(url)
@@ -28,7 +29,7 @@ def watch(bot, url):
         checks = checks + 1
         print("Unavailable. Waiting 10 seconds. Iteration "
               + str(checks) + ".")
-        time.sleep(10)
+        time.sleep(delay)
         available = bot.check_can_buy(url)
 
     print("The item is available.")
@@ -52,24 +53,54 @@ def buy(bot, url, num=0, test=True):
         thread.join()
 
 
+def get_bot(link):
+
+    if link.find("www.bestbuy.com") != -1:
+        return BestBuyBot(config)
+
+    elif link.find("www.walmart.com") != -1:
+        return WalmartBot(config)
+
+    else:
+        return None
+
+
 def main():
-    bestbuy = BestBuyBot(config)
 
-    url = bestbuy_playstation5_url
+    parser = argparse.ArgumentParser(description='A bot for online shopping.',
+                                     prog='shopper', formatter_class=
+                                     argparse.MetavarTypeHelpFormatter)
+    parser.add_argument('url', type=str, help='the link of the item to buy')
+    parser.add_argument('-d', dest='delay', type=int, default=10,
+                        help='the amount of time for the bot to wait after '
+                             'seeing that the item is out of stock before '
+                             'checking again')
+    parser.add_argument('-n', dest='number', type=int, default=1,
+                        help='the number of the specified item to buy')
 
-    watch(bestbuy, url)
+    args = parser.parse_args()
 
-    buy(bestbuy, url, 4, test=False)
+    url = args.url
+    delay = args.delay
+    number = args.number
+
+    # buy the item
+
+    bot = get_bot(url)
+
+    if bot is None:
+        print("Invalid link.")
+        return
+
+    if number < 1:
+        print("Must purchase a positive number of the item.")
+        return
+
+    watch(bot, url, delay)
+
+    buy(bot, url, number, test=False)
 
     return
-
-    # import argparse
-    # parser = argparse.ArgumentParser(description='PS5 bot main parser')
-    # parser.add_argument('--name', required=True,
-    #                     help='Specify product name to find and purchase')
-    # args = parser.parse_args()
-    # print(args.name)
-    # main_(target_product=args.name)
 
 
 if __name__ == "__main__":

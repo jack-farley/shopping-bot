@@ -10,6 +10,7 @@ selenium = "*"
 requests-html = "*"
 config = "*"
 us = "*"
+argparse = "*"
 
 [requires]
 python_version = "3.8"
