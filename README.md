@@ -9,3 +9,5 @@ python shopper.py [-h] [-d delay] [-n number] url
 ```
 
 Created by Jack Farley and Alexander Wang.
+
+(Updated as of December 2020).
